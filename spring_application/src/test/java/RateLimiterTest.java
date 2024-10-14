@@ -5,6 +5,7 @@ import ru.matthew.utils.RateLimiter;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,16 +58,7 @@ class RateLimiterTest {
             }
         });
 
-        Thread thread3 = new Thread(() -> {
-            try {
-                rateLimiter.executeWithLimit(task);
-                fail("Third thread should throw RateLimitExceededException");
-            } catch (RateLimitExceededException e) {
-                // Это ожидаемое поведение
-            } catch (Exception e) {
-                fail("Third thread should not throw any other exception");
-            }
-        });
+        Thread thread3 = new Thread(() -> assertThrows(RateLimitExceededException.class, () -> rateLimiter.executeWithLimit(task)));
 
         // Act
         thread1.start();
@@ -84,16 +76,14 @@ class RateLimiterTest {
         // Arrange
         final int threadCount = 10;
         Thread[] threads = new Thread[threadCount];
-        final int[] completedTasks = {0};
+        AtomicInteger completedTasks = new AtomicInteger(0);
 
         for (int i = 0; i < threadCount; i++) {
             threads[i] = new Thread(() -> {
                 try {
                     rateLimiter.executeWithLimit(() -> {
                         TimeUnit.MILLISECONDS.sleep(100);
-                        synchronized (completedTasks) {
-                            completedTasks[0]++;
-                        }
+                        completedTasks.incrementAndGet();
                         return null;
                     });
                 } catch (RateLimitExceededException ignored) {
@@ -111,7 +101,7 @@ class RateLimiterTest {
         }
 
         // Assert
-        assertTrue(completedTasks[0] <= 10); // Максимум 10 завершенных задач
+        assertTrue(completedTasks.get() <= 10);
     }
 
     @Test
@@ -124,7 +114,7 @@ class RateLimiterTest {
 
         // Act
         rateLimiter.executeWithLimit(task);
-        TimeUnit.MILLISECONDS.sleep(200); // Ждем, чтобы лимит сбросился
+        TimeUnit.MILLISECONDS.sleep(200);
         String result = rateLimiter.executeWithLimit(task);
 
         // Assert

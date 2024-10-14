@@ -78,4 +78,11 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorJsonDTO("Invalid Date Range", e.getMessage()));
     }
+
+    @ExceptionHandler(ReceivingEventsException.class)
+    public ResponseEntity<ErrorJsonDTO> handleReceivingEventsException(ReceivingEventsException e) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorJsonDTO("Error when receiving events", e.getMessage()));
+    }
 }

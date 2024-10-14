@@ -17,7 +17,7 @@ public class ExecutorConfiguration {
     @Value("${app.scheduled-thread-pool.size}")
     private int scheduledThreadPoolSize;
 
-    @Bean(name = "fixedThreadPool")
+    @Bean(name = "dataInitFixedThreadPool")
     public ExecutorService fixedThreadPool() {
         return Executors.newFixedThreadPool(fixedThreadPoolSize, runnable -> {
             Thread thread = new Thread(runnable);
@@ -30,4 +30,5 @@ public class ExecutorConfiguration {
     public ScheduledExecutorService scheduledThreadPool() {
         return Executors.newScheduledThreadPool(scheduledThreadPoolSize);
     }
+
 }

@@ -25,9 +25,7 @@ public class DataInitializerService {
     private final ExternalDataLoaderService externalDataLoaderService;
     private final LocationService locationService;
     private final PlaceCategoryService placeCategoryService;
-    @Qualifier("fixedThreadPool")
     private final ExecutorService fixedThreadPool;
-    @Qualifier("scheduledThreadPool")
     private final ScheduledExecutorService scheduledThreadPool;
     @Value("${app.init.schedule.duration}")
     private Duration scheduleDuration;
@@ -36,8 +34,8 @@ public class DataInitializerService {
             ExternalDataLoaderService externalDataLoaderService,
             LocationService locationService,
             PlaceCategoryService placeCategoryService,
-            ExecutorService fixedThreadPool,
-            ScheduledExecutorService scheduledThreadPool) {
+            @Qualifier("dataInitFixedThreadPool") ExecutorService fixedThreadPool,
+            @Qualifier("scheduledThreadPool") ScheduledExecutorService scheduledThreadPool) {
         this.externalDataLoaderService = externalDataLoaderService;
         this.locationService = locationService;
         this.placeCategoryService = placeCategoryService;
