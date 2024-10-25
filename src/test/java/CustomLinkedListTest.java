@@ -2,10 +2,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import ru.matthew.lesson3.CustomLinkedList;
-
-import java.util.Arrays;
-import java.util.Collections;
+import ru.matthew.lesson3.collection.CustomLinkedList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,16 +18,6 @@ public class CustomLinkedListTest {
         @BeforeEach
         void setUp() {
             emptyList = new CustomLinkedList<>();
-        }
-
-        @Test
-        @DisplayName("Конструктор с коллекцией элементов")
-        void testConstructorWithCollection() {
-            emptyList = new CustomLinkedList<>(Arrays.asList(1, 2, 3, 4, 5));
-
-            assertEquals(5, emptyList.size(), "Размер списка должен быть 5");
-            assertEquals(1, emptyList.get(0), "Первый элемент должен быть 1");
-            assertEquals(5, emptyList.get(4), "Последний элемент должен быть 5");
         }
 
         @Test
@@ -51,8 +38,8 @@ public class CustomLinkedListTest {
             emptyList.add(1);
             assertEquals(1, emptyList.size(), "Размер списка должен стать 1 после добавления элемента");
             assertEquals(1, emptyList.get(0), "Добавленный элемент должен быть первым в списке");
-            assertEquals(1, emptyList.getHead(), "'Голова' списка должна указывать на 1");
-            assertEquals(1, emptyList.getTail(), "'Хвост' списка должн указывать на 1");
+            assertEquals(1, emptyList.getHead().getData(), "'Голова' списка должна указывать на 1");
+            assertEquals(1, emptyList.getTail(), "'Хвост' списка должен указывать на 1");
         }
 
         @Test
@@ -74,16 +61,6 @@ public class CustomLinkedListTest {
             assertThrows(IndexOutOfBoundsException.class, () -> emptyList.get(0),
                     "Получение элемента из пустого списка должно выбрасывать IndexOutOfBoundsException");
         }
-
-        @Test
-        @DisplayName("Добавление всех элементов в пустой список")
-        void testAddAllToEmptyList() {
-            emptyList.addAll(Arrays.asList(1, 2, 3));
-            assertEquals(3, emptyList.size(), "Размер списка должен быть 3 после добавления всех элементов");
-            assertEquals(1, emptyList.get(0), "Первый элемент должен быть 1");
-            assertEquals(2, emptyList.get(1), "Второй элемент должен быть 2");
-            assertEquals(3, emptyList.get(2), "Третий элемент должен быть 3");
-        }
     }
 
     @Nested
@@ -94,7 +71,10 @@ public class CustomLinkedListTest {
 
         @BeforeEach
         void setUp() {
-            listWithElements = new CustomLinkedList<>(Arrays.asList(1, 2, 3));
+            listWithElements = new CustomLinkedList<>();
+            listWithElements.add(1);
+            listWithElements.add(2);
+            listWithElements.add(3);
         }
 
         @Test
@@ -133,7 +113,7 @@ public class CustomLinkedListTest {
             listWithElements.add(0, 4);
 
             assertEquals(4, listWithElements.size(), "Размер списка должен быть 4 после добавления");
-            assertEquals(4, listWithElements.getHead(), "Первый элемент должен быть 4");
+            assertEquals(4, listWithElements.getHead().getData(), "Первый элемент должен быть 4");
 
         }
 
@@ -172,7 +152,7 @@ public class CustomLinkedListTest {
             assertEquals(3, listWithElements.size(), "Размер списка должен уменьшиться " +
                     "до 3 после удаления первого элемента");
             assertEquals(2, listWithElements.get(0), "Первым элементом должен быть 2 после удаления 1");
-            assertEquals(2, listWithElements.getHead(), "'Голова' элемента должна стать 2");
+            assertEquals(2, listWithElements.getHead().getData(), "'Голова' элемента должна стать 2");
         }
 
         @Test
@@ -197,16 +177,6 @@ public class CustomLinkedListTest {
         @DisplayName("Список не содержит элемент")
         void testDoesNotContainElement() {
             assertFalse(listWithElements.contains(5), "Список не должен содержать элемент 5");
-        }
-
-        @Test
-        @DisplayName("Добавление всех элементов в непустой список")
-        void testAddAllToNonEmptyList() {
-            listWithElements.addAll(Arrays.asList(4, 5, 6));
-            assertEquals(6, listWithElements.size(), "Размер списка должен стать 6 после добавления элементов");
-            assertEquals(4, listWithElements.get(3), "Четвертым элементом должен стать 4");
-            assertEquals(5, listWithElements.get(4), "Пятым элементом должен стать 5");
-            assertEquals(6, listWithElements.get(5), "Шестым элементом должен стать 6");
         }
 
         @Test
@@ -235,7 +205,8 @@ public class CustomLinkedListTest {
 
         @BeforeEach
         void setUp() {
-            singleElementList = new CustomLinkedList<>(Collections.singletonList(1));
+            singleElementList = new CustomLinkedList<>();
+            singleElementList.add(1);
         }
 
         @Test

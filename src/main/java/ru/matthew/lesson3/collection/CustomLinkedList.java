@@ -1,12 +1,18 @@
-package ru.matthew.lesson3;
+package ru.matthew.lesson3.collection;
+
+import lombok.Getter;
+import ru.matthew.lesson3.iterator.CustomIterator;
+import ru.matthew.lesson3.iterator.LinkedListIterator;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class CustomLinkedList<E> implements MyCollection<E>{
-    private static class Node<E> {
+    public static class Node<E> {
+        @Getter
         E data;
+        @Getter
         Node<E> next;
         Node<E> prev;
 
@@ -15,6 +21,11 @@ public class CustomLinkedList<E> implements MyCollection<E>{
             this.prev = prev;
             this.next = next;
         }
+    }
+
+    @Override
+    public LinkedListIterator<E> createLinkedListIterator(Node<E> head) {
+        return new LinkedListIterator<>(head);
     }
 
     private Node<E> head;
@@ -26,12 +37,6 @@ public class CustomLinkedList<E> implements MyCollection<E>{
         this.head = null;
         this.tail = null;
         this.size = 0;
-    }
-
-    // Конструктор с параметром, принимающий коллекцию для инициализации
-    public CustomLinkedList(Collection<? extends E> collection) {
-        this();
-        addAll(collection);
     }
 
     // Добавление элемента в конец списка
@@ -97,15 +102,6 @@ public class CustomLinkedList<E> implements MyCollection<E>{
         unlink(nodeToRemove);
     }
 
-    // Добавление всех элементов из переданной коллекции в конец списка
-    @Override
-    public void addAll(Iterable<? extends E> collection) {
-        if (collection == null) {
-            throw new NullPointerException("Список не может быть равен null");
-        }
-        for (E data : collection) add(data);
-    }
-
     // Получение размера списка
     @Override
     public int size() {
@@ -118,32 +114,9 @@ public class CustomLinkedList<E> implements MyCollection<E>{
         return size == 0;
     }
 
-    // Реализация метода iterator
-    @Override
-    public Iterator<E> iterator() {
-        return new Iterator<>() {
-            private Node<E> current = head;
-
-            @Override
-            public boolean hasNext() {
-                return current != null;
-            }
-
-            @Override
-            public E next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                E data = current.data;
-                current = current.next;
-                return data;
-            }
-        };
-    }
-
     // Получение головы списка
-    public E getHead() {
-        return isEmpty() ? null : head.data;
+    public Node<E> getHead() {
+        return isEmpty() ? null : head;
     }
 
     // Получение хвоста списка
