@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.matthew.aop.Timed;
 import ru.matthew.dto.SuccessJsonDTO;
 import ru.matthew.model.Location;
+import ru.matthew.memento.LocationMemento;
 import ru.matthew.service.LocationService;
 
 import java.util.Collection;
@@ -37,6 +38,14 @@ public class LocationsController {
         Location location = locationService.getLocationBySlug(slug);
         log.info("Локация с slug {} найдена", slug);
         return location;
+    }
+
+    @GetMapping("/history")
+    public Collection<LocationMemento> getLocationsHistory() {
+        log.debug("Запрос истории изменения локаций");
+        Collection<LocationMemento> locationsHistory = locationService.getLocationHistory();
+        log.info("Успешно получена история изменения локаций");
+        return locationsHistory;
     }
 
     @PostMapping
