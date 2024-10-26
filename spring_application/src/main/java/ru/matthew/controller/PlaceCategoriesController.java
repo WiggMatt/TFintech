@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.matthew.aop.Timed;
 import ru.matthew.dto.SuccessJsonDTO;
 import ru.matthew.model.PlaceCategory;
+import ru.matthew.memento.PlaceCategoryMemento;
 import ru.matthew.service.PlaceCategoryService;
 
 import java.util.Collection;
@@ -39,6 +40,14 @@ public class PlaceCategoriesController {
         PlaceCategory category = placeCategoryService.getPlaceCategoryById(id);
         log.info("Категория места с id {} найдена", id);
         return category;
+    }
+
+    @GetMapping("/history")
+    public Collection<PlaceCategoryMemento> getPlaceCategoriesHistory() {
+        log.debug("Запрос истории изменения категорий мест");
+        Collection<PlaceCategoryMemento> placeCategoryHistory = placeCategoryService.getLocationHistory();
+        log.info("Успешно получена история изменения категорий мест");
+        return placeCategoryHistory;
     }
 
     @PostMapping

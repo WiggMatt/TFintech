@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import ru.matthew.exception.ElementAlreadyExistsException;
 import ru.matthew.exception.ElementWasNotFoundException;
 import ru.matthew.model.PlaceCategory;
+import ru.matthew.memento.PlaceCategoryMemento;
+import ru.matthew.repository.HistoryStore;
 import ru.matthew.repository.InMemoryStore;
 
 import java.util.Collection;
@@ -16,6 +18,8 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class PlaceCategoryService {
     private final InMemoryStore<Integer, PlaceCategory> placeCategoryStore;
+    private final HistoryStore<PlaceCategoryMemento> placeCategoriesHistory = new HistoryStore<>();
+
 
     public Collection<PlaceCategory> getAllPlaceCategories() {
         if (placeCategoryStore.getAll().isEmpty()) {
@@ -49,25 +53,40 @@ public class PlaceCategoryService {
     }
 
     public void updatePlaceCategory(int id, PlaceCategory placeCategory) {
-        if (placeCategoryStore.get(id).isEmpty()) {
-            log.warn("Ошибка обновления категории места: категория с id {} не найдена", id);
-            throw new ElementWasNotFoundException("Категория с таким id не найдена");
-        }
         if (placeCategory.getName() == null || placeCategory.getSlug() == null) {
             log.error("Ошибка обновления категории места: name или slug отсутствуют");
             throw new IllegalArgumentException("Поле name или slug обязательно");
         }
+
+        PlaceCategory existingPlaceCategory = placeCategoryStore.get(id)
+                .orElseGet(() -> {
+                    log.warn("Ошибка обновления категории места: категория с id {} не найдена", id);
+                    throw new ElementWasNotFoundException("Категория с таким id не найдена");
+                });
+
+        // Сохраняем снимок перед обновлением
+        PlaceCategoryMemento memento = new PlaceCategoryMemento(existingPlaceCategory, "Обновление");
+        placeCategoriesHistory.save(memento);
 
         placeCategory.setId(id);
         placeCategoryStore.update(placeCategory);
     }
 
     public void deletePlaceCategory(int id) {
-        if (placeCategoryStore.get(id).isEmpty()) {
-            log.warn("Ошибка удаления категории места: категория с id {} не найдена", id);
-            throw new ElementWasNotFoundException("Локация с таким slug не найдена.");
-        }
+        PlaceCategory placeCategory = placeCategoryStore.get(id)
+                .orElseGet(() -> {
+                    log.warn("Ошибка удаления категории места: категория с id {} не найдена", id);
+                    throw new ElementWasNotFoundException("Категория места с таким id не найдена.");
+                });
+
+        // Сохраняем снимок перед удалением
+        PlaceCategoryMemento memento = new PlaceCategoryMemento(placeCategory, "Удаление");
+        placeCategoriesHistory.save(memento);
 
         placeCategoryStore.delete(id);
+    }
+
+    public Collection<PlaceCategoryMemento> getLocationHistory() {
+        return placeCategoriesHistory.getHistory();
     }
 }

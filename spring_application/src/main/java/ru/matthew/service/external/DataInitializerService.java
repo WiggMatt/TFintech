@@ -1,4 +1,4 @@
-package ru.matthew.service;
+package ru.matthew.service.external;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import ru.matthew.aop.Timed;
 import ru.matthew.model.Location;
 import ru.matthew.model.PlaceCategory;
+import ru.matthew.observer.listeners.Observer;
+import ru.matthew.observer.publisher.Observable;
 
 import java.util.List;
 
@@ -16,16 +18,16 @@ import java.util.List;
 public class DataInitializerService {
 
     private final ExternalDataLoaderService externalDataLoaderService;
-    private final LocationService locationService;
-    private final PlaceCategoryService placeCategoryService;
+    private final Observable<Location> locationObservable = new Observable<>();
+    private final Observable<PlaceCategory> placeCategoryObservable = new Observable<>();
 
     @Autowired
     public DataInitializerService(ExternalDataLoaderService externalDataLoaderService,
-                                  LocationService locationService,
-                                  PlaceCategoryService placeCategoryService) {
+                                  List<Observer<Location>> locationObservers,
+                                  List<Observer<PlaceCategory>> placeCategoryObservers) {
         this.externalDataLoaderService = externalDataLoaderService;
-        this.locationService = locationService;
-        this.placeCategoryService = placeCategoryService;
+        locationObservers.forEach(locationObservable::subscribe);
+        placeCategoryObservers.forEach(placeCategoryObservable::subscribe);
     }
 
     @Timed
@@ -45,13 +47,13 @@ public class DataInitializerService {
 
     private void initCategories() {
         List<PlaceCategory> placeCategories = externalDataLoaderService.fetchCategoriesFromApi();
-        placeCategories.forEach(placeCategoryService::createPlaceCategory);
+        placeCategoryObservable.notify(placeCategories);
         log.info("Загружено категорий: {}", placeCategories.size());
     }
 
     private void initLocations() {
         List<Location> locations = externalDataLoaderService.fetchLocationsFromApi();
-        locations.forEach(locationService::createLocation);
+        locationObservable.notify(locations);
         log.info("Загружено городов: {}", locations.size());
     }
 }
