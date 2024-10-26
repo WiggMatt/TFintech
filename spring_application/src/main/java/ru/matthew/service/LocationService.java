@@ -1,20 +1,23 @@
 package ru.matthew.service;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.matthew.exception.ElementAlreadyExistsException;
 import ru.matthew.exception.ElementWasNotFoundException;
 import ru.matthew.model.Location;
+import ru.matthew.memento.LocationMemento;
+import ru.matthew.repository.HistoryStore;
 import ru.matthew.repository.InMemoryStore;
 
 import java.util.Collection;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class LocationService {
     private final InMemoryStore<String, Location> locationStore;
+    private final HistoryStore<LocationMemento> locationHistory = new HistoryStore<>();
 
     public Collection<Location> getAllLocations() {
         if (locationStore.getAll().isEmpty()) {
@@ -51,25 +54,35 @@ public class LocationService {
     }
 
     public void updateLocation(String slug, Location location) {
-        if (location.getName() == null) {
-            log.error("Ошибка обновления локации: имя отсутствует");
-            throw new IllegalArgumentException("Название обязательно");
-        }
-        if (locationStore.get(slug).isEmpty()) {
-            log.warn("Ошибка обновления локации: локации с slug {} не существует", slug);
-            throw new ElementWasNotFoundException("Локация с таким slug не найдена");
-        }
+        Location existingLocation = locationStore.get(slug)
+                .orElseGet(() -> {
+                    log.warn("Ошибка обновления локации: локация с slug {} не найдена", slug);
+                    throw new ElementWasNotFoundException("Локация с таким slug не найдена");
+                });
+
+        // Сохраняем снимок перед обновлением
+        LocationMemento memento = new LocationMemento(existingLocation, "Обновление");
+        locationHistory.save(memento);
 
         location.setSlug(slug);
         locationStore.update(location);
     }
 
     public void deleteLocation(String slug) {
-        if (locationStore.get(slug).isEmpty()) {
-            log.warn("Ошибка удаления локации: локация с slug {} не найдена", slug);
-            throw new ElementWasNotFoundException("Локация с таким slug не найдена");
-        }
+        Location location = locationStore.get(slug)
+                .orElseGet(() -> {
+                    log.warn("Ошибка удаления локации: локация с slug {} не найдена", slug);
+                    throw new ElementWasNotFoundException("Локация с таким slug не найдена");
+                });
+
+        // Сохраняем снимок перед удалением
+        LocationMemento memento = new LocationMemento(location, "Удаление");
+        locationHistory.save(memento);
 
         locationStore.delete(slug);
+    }
+
+    public Collection<LocationMemento> getLocationHistory() {
+        return locationHistory.getHistory();
     }
 }
