@@ -45,11 +45,18 @@ public class KudaGoApiService {
     public Flux<EventDTO> fetchEvents(LocalDate fromDate, LocalDate toDate) {
         String requestUrl = buildRequestUrl(fromDate, toDate);
 
-        return Mono.fromCallable(() -> rateLimiter.executeWithLimit(() -> webClient.get()
-                        .uri(requestUrl)
-                        .retrieve()
-                        .bodyToMono(EventResponseDTO.class)
-                        .block()))
+        return Mono.defer(() -> {
+                    try {
+                        return rateLimiter.executeWithLimit(() ->
+                                webClient.get()
+                                        .uri(requestUrl)
+                                        .retrieve()
+                                        .bodyToMono(EventResponseDTO.class)
+                        );
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                })
                 .flatMapMany(response -> {
                     if (response != null && response.getResults() != null) {
                         return Flux.fromIterable(response.getResults());
