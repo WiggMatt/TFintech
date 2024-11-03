@@ -1,33 +1,29 @@
 package ru.matthew.service;
 
-
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.matthew.dao.model.Event;
 import ru.matthew.dao.repository.EventRepository;
+import ru.matthew.dto.EventDTO;
 import ru.matthew.exception.ElementAlreadyExistsException;
 import ru.matthew.exception.ElementWasNotFoundException;
 import ru.matthew.utils.EventSpecification;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class EventService {
 
     private final EventSpecification eventSpecification;
     private final EventRepository eventRepository;
 
-    @Autowired
-    public EventService(EventSpecification eventSpecification, EventRepository eventRepository) {
-        this.eventSpecification = eventSpecification;
-        this.eventRepository = eventRepository;
-    }
-
-    public List<Event> getEventsByFilter(String title, String locationSlug, LocalDate fromDate, LocalDate toDate) {
+    public List<EventDTO> getEventsByFilter(String title, String locationSlug, LocalDate fromDate, LocalDate toDate) {
         if (eventRepository.findAll().isEmpty()) {
             String message = "Список с событиями пуст";
             log.warn(message);
@@ -50,7 +46,7 @@ public class EventService {
             throw new ElementWasNotFoundException(message);
         }
 
-        return events;
+        return events.stream().map(EventDTO::fromEntity).collect(Collectors.toList());
     }
 
     public void createEvent(Event event) {

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.matthew.dao.model.Event;
+import ru.matthew.dto.EventDTO;
 import ru.matthew.dto.SuccessJsonDTO;
 import ru.matthew.service.EventService;
 
@@ -25,14 +26,14 @@ public class EventController {
 
     // Поиск событий по фильтрам
     @GetMapping
-    public List<Event> searchEvents(
+    public List<EventDTO> searchEvents(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String locationSlug,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
 
         log.debug("Запрос событий с фильтром");
-        List<Event> events = eventService.getEventsByFilter(title, locationSlug, fromDate, toDate);
+        List<EventDTO> events = eventService.getEventsByFilter(title, locationSlug, fromDate, toDate);
         log.info("Успешно получены все события");
         return events;
     }

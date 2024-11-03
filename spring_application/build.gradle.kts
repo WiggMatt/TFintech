@@ -27,6 +27,8 @@ dependencies {
     implementation("org.liquibase:liquibase-core:4.29.2")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     testImplementation("org.testcontainers:postgresql:1.20.1")
+    compileOnly("org.hibernate.orm:hibernate-jpamodelgen:6.4.4.Final")
+    annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.4.4.Final")
 }
 
 tasks.test {
