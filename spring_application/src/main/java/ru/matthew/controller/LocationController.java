@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.matthew.dao.model.Location;
 import ru.matthew.dto.LocationDTO;
-import ru.matthew.dto.SuccessJsonDTO;
+import ru.matthew.dto.common.SuccessJsonDTO;
 import ru.matthew.service.LocationService;
 
 import java.util.List;

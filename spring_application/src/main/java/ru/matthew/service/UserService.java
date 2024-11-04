@@ -1,33 +1,45 @@
 package ru.matthew.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.matthew.dao.model.User;
 import ru.matthew.dao.repository.UserRepository;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = new BCryptPasswordEncoder();
-    }
+    public void create(User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            // Заменить на свои исключения
+            throw new RuntimeException("Пользователь с таким именем уже существует");
+        }
 
-    public void registerUser(String username, String email, String password) {
-        // Хеширование пароля
-        String encodedPassword = passwordEncoder.encode(password);
-
-        User user = new User();
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(encodedPassword);
-        user.setRole("USER");
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RuntimeException("Пользователь с таким email уже существует");
+        }
 
         userRepository.save(user);
+    }
+
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+
+    }
+
+    public UserDetailsService userDetailsService() {
+        return this::getByUsername;
+    }
+
+    public User getCurrentUser() {
+        // Получение имени пользователя из контекста Spring Security
+        var username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return getByUsername(username);
     }
 }

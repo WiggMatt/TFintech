@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.matthew.dto.ErrorJsonDTO;
+import ru.matthew.dto.common.ErrorJsonDTO;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

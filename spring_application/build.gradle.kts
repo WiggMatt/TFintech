@@ -31,6 +31,9 @@ dependencies {
     annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.4.4.Final")
     implementation("org.springframework.boot:spring-boot-starter-security:3.3.0")
     implementation("org.springframework.security:spring-security-crypto:6.3.3")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+    implementation("io.jsonwebtoken:jjwt-impl:0.12.6")
+    implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
 }
 
 tasks.test {
