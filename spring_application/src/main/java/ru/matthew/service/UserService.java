@@ -1,7 +1,6 @@
 package ru.matthew.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -14,6 +13,10 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
     public void create(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
             // Заменить на свои исключения
@@ -24,7 +27,7 @@ public class UserService {
             throw new RuntimeException("Пользователь с таким email уже существует");
         }
 
-        userRepository.save(user);
+        save(user);
     }
 
     public User getByUsername(String username) {
@@ -37,9 +40,12 @@ public class UserService {
         return this::getByUsername;
     }
 
-    public User getCurrentUser() {
-        // Получение имени пользователя из контекста Spring Security
-        var username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return getByUsername(username);
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
     }
 }

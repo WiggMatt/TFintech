@@ -33,4 +33,19 @@ public class AuthController {
         authenticationService.logout(token);
         return new SuccessJsonDTO("Вы успешно вышли из аккаунта");
     }
+
+    @PostMapping("/reset-password/request")
+    public SuccessJsonDTO requestPasswordReset(@RequestParam String email) {
+        authenticationService.sendMessage(email, "Ваш код для сброса пароля: 0000");
+        return new SuccessJsonDTO("Код для сброса пароля отправлен на указанный адрес");
+    }
+
+    @PostMapping("/reset-password/confirm")
+    public SuccessJsonDTO confirmPasswordReset(
+            @RequestParam String email,
+            @RequestParam String code,
+            @RequestParam String newPassword) {
+        authenticationService.updatePassword(email, newPassword, code);
+        return new SuccessJsonDTO("Пароль успешно изменён");
+    }
 }

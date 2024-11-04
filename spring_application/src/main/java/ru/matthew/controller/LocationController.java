@@ -3,6 +3,7 @@ package ru.matthew.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.matthew.dao.model.Location;
 import ru.matthew.dto.LocationDTO;
@@ -42,6 +43,7 @@ public class LocationController {
     }
 
     // Создание локации
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public SuccessJsonDTO createLocation(@Valid @RequestBody Location location) {
         locationService.createLocation(location);
@@ -50,6 +52,7 @@ public class LocationController {
     }
 
     // Обновление локации
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{slug}")
     public SuccessJsonDTO updateLocation(@PathVariable String slug, @Valid @RequestBody Location location) {
         locationService.updateLocation(slug, location);
@@ -58,6 +61,7 @@ public class LocationController {
     }
 
     // Удаление локации
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{slug}")
     public SuccessJsonDTO deleteLocation(@PathVariable String slug) {
         locationService.deleteLocation(slug);

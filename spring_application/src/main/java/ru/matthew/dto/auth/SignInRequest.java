@@ -17,5 +17,5 @@ public class SignInRequest {
     private String password;
 
     @NotNull
-    private Boolean rememberMe = true;
+    private Boolean rememberMe = false;
 }

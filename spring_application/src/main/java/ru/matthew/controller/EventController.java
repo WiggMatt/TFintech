@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.matthew.dto.EventDTO;
 import ru.matthew.dto.common.SuccessJsonDTO;
@@ -38,6 +39,7 @@ public class EventController {
     }
 
     // Создание нового события
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public SuccessJsonDTO createEvent(@Valid @RequestBody EventDTO eventDTO) {
         eventService.createEvent(eventDTO);
@@ -46,6 +48,7 @@ public class EventController {
     }
 
     // Обновление события
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public SuccessJsonDTO updateEvent(@PathVariable Long id, @RequestBody EventDTO eventDTO) {
         eventService.updateEvent(id, eventDTO);
@@ -55,6 +58,7 @@ public class EventController {
 
     // Удаление события
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public SuccessJsonDTO deleteEvent(@PathVariable Long id) {
         eventService.deleteEvent(id);
         log.info("Событие с ID {} успешно удалено", id);

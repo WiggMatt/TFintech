@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import ru.matthew.dto.auth.JwtAuthenticationResponse;
 import ru.matthew.dto.auth.SignInRequest;
 import ru.matthew.dto.auth.SignUpRequest;
+import ru.matthew.dto.common.ErrorJsonDTO;
+import ru.matthew.dto.common.SuccessJsonDTO;
 import ru.matthew.utils.Role;
 
 @Service
@@ -50,5 +52,22 @@ public class AuthenticationService {
 
     public void logout(String token) {
         jwtService.removeToken(token);
+    }
+
+    public void updatePassword(String email, String newPassword, String code) {
+        if (!"0000".equals(code)) {
+            throw new RuntimeException("Неверный код подтверждения");
+        }
+
+        if (userService.existsByEmail(email)) {
+            User user = userService.getByEmail(email);
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userService.save(user);
+        }
+    }
+
+    public void sendMessage(String email, String message) {
+        // Имитация отправки SMS
+        System.out.println("Отправка SMS на " + email + ": " + message);
     }
 }
