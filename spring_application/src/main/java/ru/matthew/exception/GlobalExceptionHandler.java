@@ -42,4 +42,18 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorJsonDTO("Bad Request", errorMessage.toString()));
     }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorJsonDTO> handleAuthenticationException(AuthenticationException e) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new ErrorJsonDTO("Forbidden", e.getMessage()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorJsonDTO> handleGeneralException(Exception e) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorJsonDTO("Internal Server Error", e.getMessage()));
+    }
 }
