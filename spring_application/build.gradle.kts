@@ -29,6 +29,8 @@ dependencies {
     testImplementation("org.testcontainers:postgresql:1.20.1")
     compileOnly("org.hibernate.orm:hibernate-jpamodelgen:6.4.4.Final")
     annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.4.4.Final")
+    implementation("org.springframework.boot:spring-boot-starter-security:3.3.0")
+    implementation("org.springframework.security:spring-security-crypto:6.3.3")
 }
 
 tasks.test {

@@ -32,12 +32,7 @@ public class EventDTO {
     private BigDecimal price;
 
     @NotBlank(message = "Локация не может быть пустой")
-    private String locationSlug;  // Используем строку вместо объекта Location
-
-//    @NotNull(message = "Локация не может быть пустой")
-//    @JsonIgnoreProperties("events")
-//    @JsonDeserialize(using = LocationDeserializer.class)
-//    private Location location;
+    private String locationSlug;
 
     public static EventDTO fromEntity(Event event) {
         return new EventDTO(
