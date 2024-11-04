@@ -40,16 +40,16 @@ public class EventController {
 
     // Создание нового события
     @PostMapping
-    public SuccessJsonDTO createEvent(@Valid @RequestBody Event event) {
-        eventService.createEvent(event);
-        log.info("Событие с ID {} успешно создано", event.getId());
+    public SuccessJsonDTO createEvent(@Valid @RequestBody EventDTO eventDTO) {
+        eventService.createEvent(eventDTO);
+        log.info("Событие успешно создано");
         return new SuccessJsonDTO("Событие успешно создано");
     }
 
     // Обновление события
     @PutMapping("/{id}")
-    public SuccessJsonDTO updateEvent(@PathVariable Long id, @RequestBody Event event) {
-        eventService.updateEvent(id, event);
+    public SuccessJsonDTO updateEvent(@PathVariable Long id, @RequestBody EventDTO eventDTO) {
+        eventService.updateEvent(id, eventDTO);
         log.info("Событие с ID {} успешно обновлено", id);
         return new SuccessJsonDTO("Событие успешно обновлено");
     }

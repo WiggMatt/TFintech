@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.matthew.dao.model.Event;
+import ru.matthew.dao.model.Location;
 import ru.matthew.dao.repository.EventRepository;
+import ru.matthew.dao.repository.LocationRepository;
 import ru.matthew.dto.EventDTO;
 import ru.matthew.exception.ElementAlreadyExistsException;
 import ru.matthew.exception.ElementWasNotFoundException;
@@ -22,6 +24,8 @@ public class EventService {
 
     private final EventSpecification eventSpecification;
     private final EventRepository eventRepository;
+    private final LocationRepository locationRepository;
+
 
     public List<EventDTO> getEventsByFilter(String title, String locationSlug, LocalDate fromDate, LocalDate toDate) {
         if (eventRepository.findAll().isEmpty()) {
@@ -49,7 +53,11 @@ public class EventService {
         return events.stream().map(EventDTO::fromEntity).collect(Collectors.toList());
     }
 
-    public void createEvent(Event event) {
+    public void createEvent(EventDTO eventDTO) {
+        Location location = getLocationIfExists(eventDTO.getLocationSlug());
+
+        Event event = eventDTO.toEntity(location);
+
         boolean eventExists = eventRepository.existsByTitleAndDateAndLocationSlug(
                 event.getTitle(),
                 event.getDate(),
@@ -64,8 +72,12 @@ public class EventService {
         eventRepository.save(event);
     }
 
-    public void updateEvent(Long id, Event event) {
+    public void updateEvent(Long id, EventDTO eventDTO) {
         checkEventNotExists(id);
+
+        Location location = getLocationIfExists(eventDTO.getLocationSlug());
+
+        Event event = eventDTO.toEntity(location);
 
         event.setId(id);
         eventRepository.save(event);
@@ -81,5 +93,10 @@ public class EventService {
             log.warn("Событие с ID {} не найдено", id);
             throw new ElementWasNotFoundException("Событие с таким ID не найдено");
         }
+    }
+
+    private Location getLocationIfExists(String slug) {
+        return locationRepository.findById(slug)
+                .orElseThrow(() -> new ElementWasNotFoundException("Локация с таким slug не найдена"));
     }
 }

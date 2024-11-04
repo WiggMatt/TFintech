@@ -1,5 +1,6 @@
 package ru.matthew.dao.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -38,6 +39,6 @@ public class Event {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id", nullable = false)
-    @NotNull(message = "Локация не может быть пустой")
+    @JsonBackReference
     private Location location;
 }

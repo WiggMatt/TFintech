@@ -1,7 +1,5 @@
 package ru.matthew.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -11,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.matthew.dao.model.Event;
 import ru.matthew.dao.model.Location;
-import ru.matthew.utils.LocationDeserializer;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -34,12 +31,33 @@ public class EventDTO {
     @PositiveOrZero
     private BigDecimal price;
 
-    @NotNull(message = "Локация не может быть пустой")
-    @JsonIgnoreProperties("events")
-    @JsonDeserialize(using = LocationDeserializer.class)
-    private Location location;
+    @NotBlank(message = "Локация не может быть пустой")
+    private String locationSlug;  // Используем строку вместо объекта Location
+
+//    @NotNull(message = "Локация не может быть пустой")
+//    @JsonIgnoreProperties("events")
+//    @JsonDeserialize(using = LocationDeserializer.class)
+//    private Location location;
 
     public static EventDTO fromEntity(Event event) {
-        return new EventDTO(event.getId(), event.getTitle(), event.getDate(), event.getDescription(), event.getPrice(), event.getLocation());
+        return new EventDTO(
+                event.getId(),
+                event.getTitle(),
+                event.getDate(),
+                event.getDescription(),
+                event.getPrice(),
+                event.getLocation().getSlug()
+        );
+    }
+
+    public Event toEntity(Location location) {
+        return new Event(
+                this.id,
+                this.title,
+                this.date,
+                this.description,
+                this.price,
+                location
+        );
     }
 }
