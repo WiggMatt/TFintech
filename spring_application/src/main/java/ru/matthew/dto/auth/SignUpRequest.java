@@ -3,9 +3,13 @@ package ru.matthew.dto.auth;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class SignUpRequest {
 
     @Size(min = 5, max = 50, message = "Имя пользователя должно содержать от 5 до 50 символов")

@@ -14,6 +14,7 @@ import ru.matthew.dto.auth.SignInRequest;
 import ru.matthew.dto.auth.SignUpRequest;
 import ru.matthew.exception.AuthenticationException;
 import ru.matthew.exception.ElementAlreadyExistsException;
+import ru.matthew.exception.ElementWasNotFoundException;
 import ru.matthew.utils.Role;
 
 @Service
@@ -62,6 +63,11 @@ public class AuthenticationService {
 
     public void updatePassword(String email, String newPassword, String code) {
         log.info("Запрос на изменение пароля для email: {}", email);
+
+        if (!userService.existsByEmail(email)) {
+            log.warn("Пользователь с email {} не найден", email);
+            throw new ElementWasNotFoundException("Пользователь не найден");
+        }
 
         validateResetCode(code);
         User user = userService.getByEmail(email);
