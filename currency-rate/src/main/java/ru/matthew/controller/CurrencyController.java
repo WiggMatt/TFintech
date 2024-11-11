@@ -9,7 +9,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PostMapping;
 import ru.matthew.dto.CurrencyConversionRequest;
 import ru.matthew.dto.CurrencyConversionResponse;
 import ru.matthew.dto.CurrencyRateResponse;
@@ -42,21 +48,24 @@ public class CurrencyController {
                             schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(
                                     name = "Пример ошибки 400",
-                                    value = "{\n  \"error\": \"Bad Request\",\n  \"message\": \"Unsupported currency code: EUR\"\n}"
+                                    value = "{\n  \"error\": \"Bad Request\",\n  "
+                                            + "\"message\": \"Unsupported currency code: EUR\"\n}"
                             ))),
             @ApiResponse(responseCode = "404", description = "Курс валюты не найден",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(
                                     name = "Пример ошибки 404",
-                                    value = "{\n  \"error\": \"Not Found\",\n  \"message\": \"Currency rate not found for code: GBP\"\n}"
+                                    value = "{\n  \"error\": \"Not Found\",\n  \"message\": "
+                                            + "\"Currency rate not found for code: GBP\"\n}"
                             ))),
             @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(
                                     name = "Пример ошибки 500",
-                                    value = "{\n  \"error\": \"Internal Server Error\",\n  \"message\": \"Unexpected error occurred\"\n}"
+                                    value = "{\n  \"error\": \"Internal Server Error\",\n  "
+                                            + "\"message\": \"Unexpected error occurred\"\n}"
                             )))
     })
     @GetMapping("/rates/{code}")
@@ -81,21 +90,24 @@ public class CurrencyController {
                             schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(
                                     name = "Пример ошибки 400",
-                                    value = "{\n  \"error\": \"Bad Request\",\n  \"message\": \"Unsupported currency code: EUR\"\n}"
+                                    value = "{\n  \"error\": \"Bad Request\",\n "
+                                            + " \"message\": \"Unsupported currency code: EUR\"\n}"
                             ))),
             @ApiResponse(responseCode = "404", description = "Курс валюты не найден",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(
                                     name = "Пример ошибки 404",
-                                    value = "{\n  \"error\": \"Not Found\",\n  \"message\": \"Currency rate not found for code: GBP\"\n}"
+                                    value = "{\n  \"error\": \"Not Found\",\n "
+                                            + " \"message\": \"Currency rate not found for code: GBP\"\n}"
                             ))),
             @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(
                                     name = "Пример ошибки 500",
-                                    value = "{\n  \"error\": \"Internal Server Error\",\n  \"message\": \"Unexpected error occurred\"\n}"
+                                    value = "{\n  \"error\": \"Internal Server Error\",\n "
+                                            + " \"message\": \"Unexpected error occurred\"\n}"
                             )))
     })
     @PostMapping("/convert")

@@ -22,7 +22,10 @@ import java.util.stream.Stream;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 
 @SpringBootTest(classes = CurrencyRateApplication.class)
 @AutoConfigureMockMvc
@@ -39,7 +42,7 @@ public class CurrencyControllerTest {
     // Проверка валидации для эндпоинта /currencies/convert
     @ParameterizedTest
     @MethodSource("provideInvalidCurrencyRequests")
-    void convertCurrency_WhenInvalidRequest_ThrowsBadRequest(CurrencyConversionRequest request) throws Exception {
+    void convertCurrencyWhenInvalidRequestThrowsBadRequest(CurrencyConversionRequest request) throws Exception {
         // Act & Assert
         mockMvc.perform(post("/currencies/convert")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -65,14 +68,15 @@ public class CurrencyControllerTest {
 
 
     @Test
-    void convertCurrency_WhenExternalServiceUnavailable_ThrowsServiceUnavailableException() throws Exception {
+    void convertCurrencyWhenExternalServiceUnavailableThrowsServiceUnavailableException() throws Exception {
         // Arrange
         CurrencyConversionRequest request = new CurrencyConversionRequest();
         request.setAmount(100d);
         request.setFromCurrency("USD");
         request.setToCurrency("RUB");
 
-        when(currencyRateCacheService.getCurrencyRates()).thenThrow(new ServiceUnavailableException("Currency service is unavailable", 3600));
+        when(currencyRateCacheService.getCurrencyRates())
+                .thenThrow(new ServiceUnavailableException("Currency service is unavailable", 3600));
 
         // Act & Assert
         mockMvc.perform(post("/currencies/convert")
@@ -85,7 +89,7 @@ public class CurrencyControllerTest {
 
     // Проверка правильности конвертации для эндпоинта /currencies/convert
     @Test
-    void convertCurrency_WhenValidRequest_ReturnsConvertedAmount() throws Exception {
+    void convertCurrencyWhenValidRequestReturnsConvertedAmount() throws Exception {
         // Arrange
         CurrencyConversionRequest request = new CurrencyConversionRequest();
         request.setAmount(100d);
@@ -111,7 +115,9 @@ public class CurrencyControllerTest {
     // Проверка валидации для эндпоинта /currencies/rates/{code}
     @ParameterizedTest
     @MethodSource("provideCurrencyCodesForValidation")
-    void getCurrencyRate_WhenInvalidCode_ThrowsExpectedException(String currencyCode, Exception expectedException, String expectedMessage) throws Exception {
+    void getCurrencyRateWhenInvalidCodeThrowsExpectedException(String currencyCode,
+                                                                 Exception expectedException,
+                                                                 String expectedMessage) throws Exception {
         // Arrange
         when(currencyRateCacheService.getCurrencyRates()).thenThrow(expectedException);
 
@@ -123,8 +129,10 @@ public class CurrencyControllerTest {
 
     private static Stream<Object[]> provideCurrencyCodesForValidation() {
         return Stream.of(
-                new Object[]{"INVALID_CODE", new UnsupportedCurrencyException("Unsupported currency code"), "Unsupported currency code: INVALID_CODE"},
-                new Object[]{"XXX", new CurrencyNotFoundException("Currency rate not found for code: XXX"), "Currency rate not found for code: XXX"}
+                new Object[]{"INVALID_CODE", new UnsupportedCurrencyException("Unsupported currency code"),
+                        "Unsupported currency code: INVALID_CODE"},
+                new Object[]{"XXX", new CurrencyNotFoundException("Currency rate not found for code: XXX"),
+                        "Currency rate not found for code: XXX"}
         );
     }
 }
