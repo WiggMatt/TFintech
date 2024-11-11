@@ -33,6 +33,15 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.withType<Checkstyle> {
+    configFile = file("config/checkstyle/checkstyle.xml")
+    reports {
+        xml.required.set(true)
+        html.required.set(false)
+    }
+}
+
+
 jacoco {
     toolVersion = "0.8.8"
 }
