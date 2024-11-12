@@ -44,4 +44,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push Docker image
-        run: docker push ghcr.io/${{ github.repository }}/my-app:${{ github.sha }}
+        run: docker push ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/my-app:${{ github.sha }}
