@@ -3,6 +3,7 @@ plugins {
     id("org.springframework.boot") version "3.3.4"
     id("io.spring.dependency-management") version "1.1.6"
     id("jacoco")
+    id("checkstyle")
 }
 
 group = "ru.matthew"
@@ -31,6 +32,18 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.checkstyleMain {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+checkstyle {
+    toolVersion = "10.0"
+    configFile = file("D:/Programming/IDEs/IntelliJ IDEA Community Edition 2024.1.4/projects/tfintech/currency-rate/config/checkstyle/checkstyle.xml")
 }
 
 jacoco {

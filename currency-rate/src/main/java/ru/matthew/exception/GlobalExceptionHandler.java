@@ -43,4 +43,3 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("Not Found", e.getMessage()));
     }
 }
-    
