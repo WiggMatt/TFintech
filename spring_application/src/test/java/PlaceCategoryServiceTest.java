@@ -13,9 +13,15 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentCaptor.forClass;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 public class PlaceCategoryServiceTest {
     private PlaceCategoryService placeCategoryService;
@@ -30,7 +36,7 @@ public class PlaceCategoryServiceTest {
     // Positive tests
 
     @Test
-    public void getAllPlaceCategories_WhenCategoriesExist_ReturnsCategories() {
+    public void getAllPlaceCategoriesWhenCategoriesExistReturnsCategories() {
         // Arrange
         PlaceCategory category = new PlaceCategory(1, "Test Category", "test-slug");
         when(placeCategoryStore.getAll()).thenReturn(Collections.singletonList(category));
@@ -45,7 +51,7 @@ public class PlaceCategoryServiceTest {
     }
 
     @Test
-    public void getPlaceCategoryById_WhenCategoryExists_ReturnsCategory() {
+    public void getPlaceCategoryByIdWhenCategoryExistsReturnsCategory() {
         // Arrange
         PlaceCategory category = new PlaceCategory(1, "Test Category", "test-slug");
         when(placeCategoryStore.get(1)).thenReturn(Optional.of(category));
@@ -59,7 +65,7 @@ public class PlaceCategoryServiceTest {
     }
 
     @Test
-    public void createPlaceCategory_WhenCategoryDoesNotExist_CreatesCategory() {
+    public void createPlaceCategoryWhenCategoryDoesNotExistCreatesCategory() {
         // Arrange
         PlaceCategory category = new PlaceCategory(1, "Test Category", "test-slug");
         when(placeCategoryStore.get(category.getId())).thenReturn(Optional.empty());
@@ -74,7 +80,7 @@ public class PlaceCategoryServiceTest {
     }
 
     @Test
-    public void updatePlaceCategory_WhenCategoryExists_UpdatesCategory() {
+    public void updatePlaceCategoryWhenCategoryExistsUpdatesCategory() {
         // Arrange
         PlaceCategory category = new PlaceCategory(1, "Updated Category", "updated-slug");
         when(placeCategoryStore.get(1)).thenReturn(Optional.of(category));
@@ -89,9 +95,10 @@ public class PlaceCategoryServiceTest {
     }
 
     @Test
-    public void deletePlaceCategory_WhenCategoryExists_DeletesCategory() {
+    public void deletePlaceCategoryWhenCategoryExistsDeletesCategory() {
         // Arrange
-        when(placeCategoryStore.get(1)).thenReturn(Optional.of(new PlaceCategory(1, "Test Category", "test-slug")));
+        when(placeCategoryStore.get(1))
+                .thenReturn(Optional.of(new PlaceCategory(1, "Test Category", "test-slug")));
 
         // Act
         placeCategoryService.deletePlaceCategory(1);
@@ -103,7 +110,7 @@ public class PlaceCategoryServiceTest {
     // Negative tests
 
     @Test
-    public void getAllPlaceCategories_WhenNoCategoriesExist_ThrowsException() {
+    public void getAllPlaceCategoriesWhenNoCategoriesExistThrowsException() {
         // Arrange
         when(placeCategoryStore.getAll()).thenReturn(Collections.emptyList());
 
@@ -112,7 +119,7 @@ public class PlaceCategoryServiceTest {
     }
 
     @Test
-    public void getPlaceCategoryById_WhenCategoryDoesNotExist_ThrowsException() {
+    public void getPlaceCategoryByIdWhenCategoryDoesNotExistThrowsException() {
         // Arrange
         when(placeCategoryStore.get(99)).thenReturn(Optional.empty());
 
@@ -121,7 +128,7 @@ public class PlaceCategoryServiceTest {
     }
 
     @Test
-    public void createPlaceCategory_WhenCategoryAlreadyExists_ThrowsException() {
+    public void createPlaceCategoryWhenCategoryAlreadyExistsThrowsException() {
         // Arrange
         PlaceCategory category = new PlaceCategory(1, "Test Category", "test-slug");
         when(placeCategoryStore.get(category.getId())).thenReturn(Optional.of(category));
@@ -132,7 +139,7 @@ public class PlaceCategoryServiceTest {
 
     @ParameterizedTest
     @MethodSource("provideInvalidCategories")
-    public void createPlaceCategory_WhenCategoryIsInvalid_ThrowsException(PlaceCategory category) {
+    public void createPlaceCategoryWhenCategoryIsInvalidThrowsException(PlaceCategory category) {
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> placeCategoryService.createPlaceCategory(category));
     }
@@ -150,12 +157,13 @@ public class PlaceCategoryServiceTest {
 
     @ParameterizedTest
     @MethodSource("provideInvalidUpdateCategories")
-    public void updatePlaceCategory_WhenCategoryIsInvalid_ThrowsException(PlaceCategory category) {
+    public void updatePlaceCategoryWhenCategoryIsInvalidThrowsException(PlaceCategory category) {
         // Arrange
         when(placeCategoryStore.get(category.getId())).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(ElementWasNotFoundException.class, () -> placeCategoryService.updatePlaceCategory(category.getId(), category));
+        assertThrows(ElementWasNotFoundException.class, () ->
+                placeCategoryService.updatePlaceCategory(category.getId(), category));
     }
 
     private static Stream<PlaceCategory> provideInvalidUpdateCategories() {
@@ -168,7 +176,7 @@ public class PlaceCategoryServiceTest {
     }
 
     @Test
-    public void deletePlaceCategory_WhenCategoryDoesNotExist_ThrowsException() {
+    public void deletePlaceCategoryWhenCategoryDoesNotExistThrowsException() {
         // Arrange
         when(placeCategoryStore.get(42)).thenReturn(Optional.empty());
 

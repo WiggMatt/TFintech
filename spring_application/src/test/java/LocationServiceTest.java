@@ -13,9 +13,14 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentCaptor.forClass;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 public class LocationServiceTest {
     private LocationService locationService;
@@ -30,7 +35,7 @@ public class LocationServiceTest {
     // Positive tests
 
     @Test
-    public void getAllLocations_WhenLocationsExist_ReturnsLocations() {
+    public void getAllLocationsWhenLocationsExistReturnsLocations() {
         // Arrange
         Location location = new Location("test-slug", "Test Location");
         when(locationStore.getAll()).thenReturn(Collections.singletonList(location));
@@ -45,7 +50,7 @@ public class LocationServiceTest {
     }
 
     @Test
-    public void getLocationBySlug_WhenLocationExists_ReturnsLocation() {
+    public void getLocationBySlugWhenLocationExistsReturnsLocation() {
         // Arrange
         Location location = new Location("test-slug", "Test Location");
         when(locationStore.get("test-slug")).thenReturn(Optional.of(location));
@@ -59,7 +64,7 @@ public class LocationServiceTest {
     }
 
     @Test
-    public void createLocation_WhenLocationDoesNotExist_CreatesLocation() {
+    public void createLocationWhenLocationDoesNotExistCreatesLocation() {
         // Arrange
         Location location = new Location("test-slug", "Test Location");
         when(locationStore.get(location.getSlug())).thenReturn(Optional.empty());
@@ -74,7 +79,7 @@ public class LocationServiceTest {
     }
 
     @Test
-    public void updateLocation_WhenLocationExists_UpdatesLocation() {
+    public void updateLocationWhenLocationExistsUpdatesLocation() {
         // Arrange
         Location location = new Location("test-slug", "Updated Location");
         when(locationStore.get("test-slug")).thenReturn(Optional.of(location));
@@ -89,7 +94,7 @@ public class LocationServiceTest {
     }
 
     @Test
-    public void deleteLocation_WhenLocationExists_DeletesLocation() {
+    public void deleteLocationWhenLocationExistsDeletesLocation() {
         // Arrange
         Location location = new Location("test-slug", "Updated Location");
         when(locationStore.get("test-slug")).thenReturn(Optional.of(location));
@@ -104,7 +109,7 @@ public class LocationServiceTest {
     // Negative tests
 
     @Test
-    public void getAllLocations_WhenNoLocationsExist_ThrowsException() {
+    public void getAllLocationsWhenNoLocationsExistThrowsException() {
         // Arrange
         when(locationStore.getAll()).thenReturn(Collections.emptyList());
 
@@ -113,7 +118,7 @@ public class LocationServiceTest {
     }
 
     @Test
-    public void getLocationBySlug_WhenLocationDoesNotExist_ThrowsException() {
+    public void getLocationBySlugWhenLocationDoesNotExistThrowsException() {
         // Arrange
         when(locationStore.get("non-existing-slug")).thenReturn(Optional.empty());
 
@@ -122,7 +127,7 @@ public class LocationServiceTest {
     }
 
     @Test
-    public void createLocation_WhenLocationAlreadyExists_ThrowsException() {
+    public void createLocationWhenLocationAlreadyExistsThrowsException() {
         // Arrange
         Location location = new Location("test-slug", "Test Location");
         when(locationStore.get(location.getSlug())).thenReturn(Optional.of(location));
@@ -133,7 +138,7 @@ public class LocationServiceTest {
 
     @ParameterizedTest
     @MethodSource("provideInvalidLocations")
-    public void createLocation_WhenLocationIsInvalid_ThrowsException(Location location) {
+    public void createLocationWhenLocationIsInvalidThrowsException(Location location) {
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> locationService.createLocation(location));
     }
@@ -151,12 +156,13 @@ public class LocationServiceTest {
 
     @ParameterizedTest
     @MethodSource("provideInvalidUpdateLocations")
-    public void updateLocation_WhenInvalidLocation_ThrowsException(Location location) {
+    public void updateLocationWhenInvalidLocationThrowsException(Location location) {
         // Arrange
         when(locationStore.get(location.getSlug())).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(ElementWasNotFoundException.class, () -> locationService.updateLocation(location.getSlug(), location));
+        assertThrows(ElementWasNotFoundException.class, () ->
+                locationService.updateLocation(location.getSlug(), location));
     }
 
     private static Stream<Location> provideInvalidUpdateLocations() {
@@ -168,7 +174,7 @@ public class LocationServiceTest {
 
 
     @Test
-    public void deleteLocation_WhenLocationDoesNotExist_ThrowsException() {
+    public void deleteLocationWhenLocationDoesNotExistThrowsException() {
         // Arrange
         when(locationStore.get("non-existing-slug")).thenReturn(Optional.empty());
 

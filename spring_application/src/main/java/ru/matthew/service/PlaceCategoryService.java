@@ -35,8 +35,8 @@ public class PlaceCategoryService {
     }
 
     public void createPlaceCategory(PlaceCategory placeCategory) {
-        if (StringUtils.isBlank(placeCategory.getName()) || StringUtils.isBlank(placeCategory.getSlug()) ||
-                placeCategory.getId() == 0) {
+        if (StringUtils.isBlank(placeCategory.getName()) || StringUtils.isBlank(placeCategory.getSlug())
+                || placeCategory.getId() == 0) {
             log.error("Ошибка создания категории места: обязательные поля отсутствуют (id, name или slug)");
             throw new IllegalArgumentException("Поля id, name и slug обязательны");
         }
