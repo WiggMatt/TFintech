@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim AS build
 WORKDIR /app
 
 # Копируем build.gradle и другие файлы зависимостей
-COPY build.gradle.kts settings.gradle.kts gradle.properties /app/
+COPY build.gradle.kts settings.gradle.kts /app/
 
 # Загружаем зависимости
 RUN ./gradlew build --no-daemon \
@@ -20,7 +20,7 @@ RUN ./gradlew bootJar
 FROM openjdk:17-jdk-slim
 
 # Копируем собранный JAR файл из предыдущего этапа
-COPY currency-rate/build.gradle.kts currency-rate/settings.gradle.kts currency-rate/gradle.properties /app/
+COPY build.gradle.kts settings.gradle.kts /app/
 
 # Открываем порт для приложения
 EXPOSE 8080
