@@ -20,7 +20,7 @@ RUN ./gradlew bootJar
 FROM openjdk:17-jdk-slim
 
 # Копируем собранный JAR файл из предыдущего этапа
-COPY --from=build /app/build/libs/*.jar /app/app.jar
+COPY currency-rate/build.gradle.kts currency-rate/settings.gradle.kts currency-rate/gradle.properties /app/
 
 # Открываем порт для приложения
 EXPOSE 8080
