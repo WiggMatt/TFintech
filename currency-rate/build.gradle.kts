@@ -43,7 +43,7 @@ tasks.checkstyleMain {
 
 checkstyle {
     toolVersion = "10.0"
-    configFile = file("config/checkstyle/checkstyle.xml")
+    configFile = file("currency-rate/config/checkstyle/checkstyle.xml")
 }
 
 jacoco {

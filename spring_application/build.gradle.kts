@@ -43,7 +43,7 @@ tasks.checkstyleMain {
 
 checkstyle {
     toolVersion = "10.0"
-    configFile = file("config/checkstyle/checkstyle.xml")
+    configFile = file("spring_application/config/checkstyle/checkstyle.xml")
 }
 
 jacoco {
