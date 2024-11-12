@@ -43,7 +43,7 @@ tasks.checkstyleMain {
 
 checkstyle {
     toolVersion = "10.0"
-    configFile = file("D:/Programming/IDEs/IntelliJ%20IDEA%20Community%20Edition%202024.1.4/projects/tfintech/currency-rate/config/checkstyle/checkstyle.xml")
+    configFile = file("D:/Programming/IDEs/IntelliJ IDEA Community Edition 2024.1.4/projects/tfintech/currency-rate/config/checkstyle/checkstyle.xml")
 }
 
 jacoco {
