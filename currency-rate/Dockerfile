@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim AS build
 WORKDIR /app
 
 # Копируем build.gradle и другие файлы зависимостей
-COPY currency-rate/build.gradle.kts settings.gradle.kts gradle.properties /app/
+COPY build.gradle.kts settings.gradle.kts gradle.properties /app/
 
 # Загружаем зависимости
 RUN ./gradlew build --no-daemon \
