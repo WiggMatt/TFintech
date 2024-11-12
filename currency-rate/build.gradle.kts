@@ -52,15 +52,14 @@ jacoco {
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
+
     reports {
         xml.required.set(true)
         csv.required.set(false)
         html.required.set(true)
     }
 
-    doLast {
-        classDirectories.setFrom(files(
-            fileTree("${layout.buildDirectory}/classes/java/main").exclude("/dto/")
-        ))
-    }
+    classDirectories.setFrom(files(
+        fileTree("${layout.buildDirectory}/classes/java/main").exclude("/dto/")
+    ))
 }
