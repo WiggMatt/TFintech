@@ -58,7 +58,7 @@ tasks.jacocoTestReport {
         html.required.set(true)
     }
 
-    afterEvaluate {
+    doLast {
         classDirectories.setFrom(files(
             fileTree("${layout.buildDirectory}/classes/java/main").exclude("/dto/")
         ))
