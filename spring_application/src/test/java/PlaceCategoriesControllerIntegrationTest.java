@@ -28,29 +28,30 @@ public class PlaceCategoriesControllerIntegrationTest {
     private TestRestTemplate restTemplate;
 
     @Container
-    public static WireMockContainer wireMockContainer = new WireMockContainer(DockerImageName.parse("wiremock/wiremock:latest"))
+    private static final WireMockContainer WIRE_MOCK_CONTAINER =
+            new WireMockContainer(DockerImageName.parse("wiremock/wiremock:latest"))
             .withMappingFromResource("wiremock/place-categories.json");
 
     @DynamicPropertySource
     static void overrideProperties(DynamicPropertyRegistry registry) {
         String wireMockUrl = String.format("https://%s:%d",
-                wireMockContainer.getHost(),
-                wireMockContainer.getMappedPort(8080));
+                WIRE_MOCK_CONTAINER.getHost(),
+                WIRE_MOCK_CONTAINER.getMappedPort(8080));
         registry.add("categories-url", () -> wireMockUrl + "/public-api/v1.2/place-categories");
     }
 
     @BeforeAll
     public static void setUp() {
-        wireMockContainer.start();
+        WIRE_MOCK_CONTAINER.start();
     }
 
     @AfterAll
     public static void tearDown() {
-        wireMockContainer.stop();
+        WIRE_MOCK_CONTAINER.stop();
     }
 
     @Test
-    void getAllPlaceCategories_ShouldReturnListOfPlaceCategories() {
+    void getAllPlaceCategoriesShouldReturnListOfPlaceCategories() {
         // Arrange
         String url = "/api/v1/places/categories";
 
@@ -64,7 +65,7 @@ public class PlaceCategoriesControllerIntegrationTest {
     }
 
     @Test
-    void getPlaceCategoryById_ShouldReturnPlaceCategory() {
+    void getPlaceCategoryByIdShouldReturnPlaceCategory() {
         // Arrange
         int id = 89;
         String url = String.format("/api/v1/places/categories/%d", id);
@@ -79,7 +80,7 @@ public class PlaceCategoriesControllerIntegrationTest {
     }
 
     @Test
-    void createPlaceCategory_ShouldReturnSuccessMessage() {
+    void createPlaceCategoryShouldReturnSuccessMessage() {
         // Arrange
         PlaceCategory newCategory = new PlaceCategory(777, "new-slug", "NewCategory");
         String url = "/api/v1/places/categories";
@@ -95,7 +96,7 @@ public class PlaceCategoriesControllerIntegrationTest {
     }
 
     @Test
-    void updatePlaceCategory_ShouldReturnSuccessMessage() {
+    void updatePlaceCategoryShouldReturnSuccessMessage() {
         // Arrange
         int id = 89;
         PlaceCategory updatedCategory = new PlaceCategory(id, "updated-slug", "Updated Category");
@@ -103,7 +104,8 @@ public class PlaceCategoriesControllerIntegrationTest {
         HttpEntity<PlaceCategory> request = new HttpEntity<>(updatedCategory);
 
         // Act
-        ResponseEntity<SuccessJsonDTO> response = restTemplate.exchange(url, HttpMethod.PUT, request, SuccessJsonDTO.class);
+        ResponseEntity<SuccessJsonDTO> response =
+                restTemplate.exchange(url, HttpMethod.PUT, request, SuccessJsonDTO.class);
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -112,13 +114,14 @@ public class PlaceCategoriesControllerIntegrationTest {
     }
 
     @Test
-    void deletePlaceCategory_ShouldReturnSuccessMessage() {
+    void deletePlaceCategoryShouldReturnSuccessMessage() {
         // Arrange
         int id = 123;
         String url = String.format("/api/v1/places/categories/%d", id);
 
         // Act
-        ResponseEntity<SuccessJsonDTO> response = restTemplate.exchange(url, HttpMethod.DELETE, null, SuccessJsonDTO.class);
+        ResponseEntity<SuccessJsonDTO> response =
+                restTemplate.exchange(url, HttpMethod.DELETE, null, SuccessJsonDTO.class);
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(OK);

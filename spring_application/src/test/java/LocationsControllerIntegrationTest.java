@@ -29,7 +29,8 @@ public class LocationsControllerIntegrationTest {
     private TestRestTemplate restTemplate;
 
     @Container
-    public static WireMockContainer wireMockContainer = new WireMockContainer(DockerImageName.parse("wiremock/wiremock:latest"))
+    private static final WireMockContainer WIRE_MOCK_CONTAINER =
+            new WireMockContainer(DockerImageName.parse("wiremock/wiremock:latest"))
             .withMappingFromResource("wiremock/place-categories.json")
             .withMappingFromResource("wiremock/locations.json");
 
@@ -37,24 +38,24 @@ public class LocationsControllerIntegrationTest {
     @DynamicPropertySource
     static void overrideProperties(DynamicPropertyRegistry registry) {
         String wireMockUrl = String.format("https://%s:%d",
-                wireMockContainer.getHost(),
-                wireMockContainer.getMappedPort(8080));
+                WIRE_MOCK_CONTAINER.getHost(),
+                WIRE_MOCK_CONTAINER.getMappedPort(8080));
         registry.add("categories-url", () -> wireMockUrl + "/public-api/v1.2/place-categories");
         registry.add("locations-url", () -> wireMockUrl + "/public-api/v1.4/locations");
     }
 
     @BeforeAll
     public static void setUp() {
-        wireMockContainer.start();
+        WIRE_MOCK_CONTAINER.start();
     }
 
     @AfterAll
     public static void tearDown() {
-        wireMockContainer.stop();
+        WIRE_MOCK_CONTAINER.stop();
     }
 
     @Test
-    void getAllLocations_ShouldReturnListOfLocations() {
+    void getAllLocationsShouldReturnListOfLocations() {
         // Arrange
         String url = "/api/v1/locations";
 
@@ -68,7 +69,7 @@ public class LocationsControllerIntegrationTest {
     }
 
     @Test
-    void getLocationBySlug_ShouldReturnLocation() {
+    void getLocationBySlugShouldReturnLocation() {
         // Arrange
         String slug = "msk";
         String url = String.format("/api/v1/locations/%s", slug);
@@ -83,7 +84,7 @@ public class LocationsControllerIntegrationTest {
     }
 
     @Test
-    void createLocation_ShouldReturnSuccessMessage() {
+    void createLocationShouldReturnSuccessMessage() {
         // Arrange
         Location newLocation = new Location("new-slug", "New Location");
         String url = "/api/v1/locations";
@@ -99,7 +100,7 @@ public class LocationsControllerIntegrationTest {
     }
 
     @Test
-    void updateLocation_ShouldReturnSuccessMessage() {
+    void updateLocationShouldReturnSuccessMessage() {
         // Arrange
         String slug = "msk";
         Location initialLocation = new Location(slug, "Initial Location");
@@ -112,7 +113,8 @@ public class LocationsControllerIntegrationTest {
         HttpEntity<Location> request = new HttpEntity<>(updatedLocation);
 
         // Act
-        ResponseEntity<SuccessJsonDTO> response = restTemplate.exchange(url, HttpMethod.PUT, request, SuccessJsonDTO.class);
+        ResponseEntity<SuccessJsonDTO> response =
+                restTemplate.exchange(url, HttpMethod.PUT, request, SuccessJsonDTO.class);
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -121,13 +123,14 @@ public class LocationsControllerIntegrationTest {
     }
 
     @Test
-    void deleteLocation_ShouldReturnSuccessMessage() {
+    void deleteLocationShouldReturnSuccessMessage() {
         // Arrange
         String slug = "msk";
         String url = String.format("/api/v1/locations/%s", slug);
 
         // Act
-        ResponseEntity<SuccessJsonDTO> response = restTemplate.exchange(url, HttpMethod.DELETE, null, SuccessJsonDTO.class);
+        ResponseEntity<SuccessJsonDTO> response =
+                restTemplate.exchange(url, HttpMethod.DELETE, null, SuccessJsonDTO.class);
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(OK);

@@ -6,7 +6,7 @@ import static org.springframework.boot.SpringApplication.run;
 
 @SpringBootApplication
 public class CurrencyRateApplication {
-	public static void main(String[] args) {
-		run(CurrencyRateApplication.class, args);
-	}
+    public static void main(String[] args) {
+        run(CurrencyRateApplication.class, args);
+    }
 }

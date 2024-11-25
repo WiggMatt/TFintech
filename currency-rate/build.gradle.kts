@@ -3,6 +3,7 @@ plugins {
     id("org.springframework.boot") version "3.3.4"
     id("io.spring.dependency-management") version "1.1.6"
     id("jacoco")
+    id("checkstyle")
 }
 
 group = "ru.matthew"
@@ -33,21 +34,32 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.checkstyleMain {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+checkstyle {
+    toolVersion = "10.0"
+    configFile = file("currency-rate/config/checkstyle/checkstyle.xml")
+}
+
 jacoco {
     toolVersion = "0.8.8"
 }
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
+
     reports {
         xml.required.set(true)
         csv.required.set(false)
         html.required.set(true)
     }
 
-    afterEvaluate {
-        classDirectories.setFrom(files(
-            fileTree("${layout.buildDirectory}/classes/java/main").exclude("/dto/")
-        ))
-    }
+    classDirectories.setFrom(files(
+        fileTree("${layout.buildDirectory}/classes/java/main").exclude("/dto/")
+    ))
 }
