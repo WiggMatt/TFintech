@@ -1,0 +1,16 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} | %-5level | %logger | %m %X%n"
